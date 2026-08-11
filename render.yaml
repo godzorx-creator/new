@@ -1,0 +1,297 @@
+# =============================================================================
+# Crypto News Telegram Bot — Configuration File
+# =============================================================================
+# Edit this file to change bot settings, sources, hashtags, and keywords.
+# The Python script reads this file at startup.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# BOT CREDENTIALS  (keep private — never share this file publicly)
+# -----------------------------------------------------------------------------
+bot:
+  token: "8809855821:AAHaEUQZNbATetvdNSf8WlqPMwZJy7TbO1g"
+  owner_id: 7237337181
+  openai_api_key: null        # Set to "sk-..." string if you have an OpenAI key
+
+
+# -----------------------------------------------------------------------------
+# OPERATIONAL SETTINGS
+# -----------------------------------------------------------------------------
+settings:
+  poll_interval_seconds: 30   # How often to check all sources (seconds)
+  max_news_age_hours: 48      # Skip articles older than this many hours
+  request_timeout_seconds: 15 # HTTP timeout per request
+  max_retries: 3              # Retry failed HTTP requests this many times
+  max_concurrent_fetches: 5   # Max simultaneous HTTP connections
+  user_agent: "Mozilla/5.0 (compatible; CryptoNewsBot/1.0)"
+
+  summary:
+    min_words: 30             # Minimum summary length
+    max_words: 70             # Maximum summary length
+
+  logging:
+    level: "INFO"             # DEBUG / INFO / WARNING / ERROR
+    max_bytes: 5242880        # 5 MB max log file size
+    backup_count: 5           # Number of rotated log files to keep
+    filename: "news_bot.log"  # Log filename (stored next to script)
+
+  database:
+    filename: "news_bot.db"   # SQLite database filename (stored next to script)
+
+
+# -----------------------------------------------------------------------------
+# MONITORED SOURCES
+# Listed in priority order: Telegram -> TON -> Crypto -> NFT -> Exchange -> Security -> Scam
+# Each source:
+#   name        : Display name shown in posts
+#   category    : Must match one of the categories defined below
+#   feed_url    : RSS/Atom feed URL (primary method)
+#   fallback_url: Web page to scrape if RSS is empty or broken (optional)
+# -----------------------------------------------------------------------------
+sources:
+
+  # --- Telegram (TOP PRIORITY) ----------------------------------------------
+  - name: "Telegram Blog"
+    category: "Telegram"
+    feed_url: "https://telegram.org/blog/rss"
+    fallback_url: "https://telegram.org/blog"
+
+  # --- TON Ecosystem --------------------------------------------------------
+  - name: "TON Foundation Blog"
+    category: "TON"
+    feed_url: "https://ton.org/en/blog/rss.xml"
+    fallback_url: "https://ton.org/en/blog"
+
+  - name: "CoinTelegraph TON"
+    category: "TON"
+    feed_url: "https://cointelegraph.com/rss/tag/ton"
+    fallback_url: "https://cointelegraph.com/tags/ton"
+
+  # --- Crypto News ----------------------------------------------------------
+  - name: "CoinDesk"
+    category: "Crypto"
+    feed_url: "https://www.coindesk.com/arc/outboundfeeds/rss/"
+    fallback_url: "https://www.coindesk.com/"
+
+  - name: "CoinTelegraph"
+    category: "Crypto"
+    feed_url: "https://cointelegraph.com/rss"
+    fallback_url: "https://cointelegraph.com/"
+
+  - name: "Decrypt"
+    category: "Crypto"
+    feed_url: "https://decrypt.co/feed"
+    fallback_url: "https://decrypt.co/news"
+
+  # --- NFT News -------------------------------------------------------------
+  - name: "CoinTelegraph NFT"
+    category: "NFT"
+    feed_url: "https://cointelegraph.com/rss/tag/nft"
+    fallback_url: "https://cointelegraph.com/tags/nft"
+
+  - name: "NFT Plazas"
+    category: "NFT"
+    feed_url: "https://nftplazas.com/feed/"
+    fallback_url: "https://nftplazas.com/news/"
+
+  # --- Exchange Announcements -----------------------------------------------
+  - name: "Binance"
+    category: "Exchange"
+    feed_url: "https://www.binance.com/en/blog/rss"
+    fallback_url: "https://www.binance.com/en/support/announcement"
+
+  - name: "Coinbase"
+    category: "Exchange"
+    feed_url: "https://www.coinbase.com/blog/rss"
+    fallback_url: "https://www.coinbase.com/blog"
+
+  - name: "Kraken"
+    category: "Exchange"
+    feed_url: "https://blog.kraken.com/feed"
+    fallback_url: "https://blog.kraken.com/"
+
+  - name: "Bybit"
+    category: "Exchange"
+    feed_url: "https://announcements.bybit.com/en-US/rss/"
+    fallback_url: "https://announcements.bybit.com/en-US/"
+
+  - name: "OKX"
+    category: "Exchange"
+    feed_url: "https://www.okx.com/help/rss/announcements"
+    fallback_url: "https://www.okx.com/help/section/announcements"
+
+  - name: "Bitget"
+    category: "Exchange"
+    feed_url: "https://www.bitget.com/support/rss"
+    fallback_url: "https://www.bitget.com/support/sections/12508313443481"
+
+  - name: "KuCoin"
+    category: "Exchange"
+    feed_url: "https://www.kucoin.com/rss/news"
+    fallback_url: "https://www.kucoin.com/announcement"
+
+  # --- Security Alerts ------------------------------------------------------
+  - name: "CoinTelegraph Hacks"
+    category: "Security"
+    feed_url: "https://cointelegraph.com/rss/tag/hacks"
+    fallback_url: "https://cointelegraph.com/tags/hacks"
+
+  - name: "The Hacker News"
+    category: "Security"
+    feed_url: "https://feeds.feedburner.com/TheHackersNews"
+    fallback_url: "https://thehackernews.com/"
+
+  # --- Scam Alerts ----------------------------------------------------------
+  - name: "CoinTelegraph Scams"
+    category: "Scam"
+    feed_url: "https://cointelegraph.com/rss/tag/scams"
+    fallback_url: "https://cointelegraph.com/tags/scams"
+
+
+# -----------------------------------------------------------------------------
+# CATEGORIES
+# priority : lower number = sent first (1 = highest priority)
+# hashtags : appended at the bottom of every post in this category
+# keywords : used to auto-detect the correct category from article text/title
+#            (checked in order: Scam -> Security -> Exchange -> TON -> Telegram -> NFT -> Crypto)
+# -----------------------------------------------------------------------------
+categories:
+
+  Telegram:
+    priority: 1
+    hashtags:
+      - "#Telegram"
+      - "#TelegramUpdate"
+      - "#News"
+    keywords:
+      - "telegram app"
+      - "telegram update"
+      - "telegram messenger"
+      - "telegram version"
+      - "telegram premium"
+      - "telegram feature"
+
+  TON:
+    priority: 2
+    hashtags:
+      - "#TON"
+      - "#TonCoin"
+      - "#TONBlockchain"
+      - "#CryptoNews"
+    keywords:
+      - "ton blockchain"
+      - "the open network"
+      - "toncoin"
+      - "ton ecosystem"
+      - " ton "
+
+  Crypto:
+    priority: 3
+    hashtags:
+      - "#Crypto"
+      - "#CryptoNews"
+      - "#Bitcoin"
+      - "#Blockchain"
+    keywords:
+      - "crypto"
+      - "bitcoin"
+      - "ethereum"
+      - "blockchain"
+      - "altcoin"
+      - "token"
+      - "defi"
+      - "web3"
+
+  NFT:
+    priority: 4
+    hashtags:
+      - "#NFT"
+      - "#NFTNews"
+      - "#Web3"
+    keywords:
+      - "nft"
+      - "non-fungible token"
+      - "opensea"
+      - "digital collectible"
+      - "mint pass"
+
+  Exchange:
+    priority: 5
+    hashtags:
+      - "#Exchange"
+      - "#CryptoExchange"
+      - "#Trading"
+    keywords:
+      - "binance"
+      - "bybit"
+      - "okx"
+      - "coinbase"
+      - "kraken"
+      - "bitget"
+      - "kucoin"
+      - "exchange listing"
+      - "delisting"
+      - "trading pair"
+
+  Security:
+    priority: 6
+    hashtags:
+      - "#Security"
+      - "#CryptoHack"
+      - "#Alert"
+      - "#CyberSecurity"
+    keywords:
+      - "hack"
+      - "hacked"
+      - "hacker"
+      - "exploit"
+      - "vulnerability"
+      - "breach"
+      - "stolen"
+      - "security incident"
+      - "compromised"
+      - "malware"
+      - "drained"
+
+  Scam:
+    priority: 7
+    hashtags:
+      - "#Scam"
+      - "#CryptoScam"
+      - "#Alert"
+      - "#StaySafe"
+    keywords:
+      - "scam"
+      - "rug pull"
+      - "rug-pull"
+      - "phishing"
+      - "ponzi"
+      - "fraudulent"
+      - "fraud alert"
+      - "exit scam"
+      - "impersonat"
+      - "fake giveaway"
+
+
+# -----------------------------------------------------------------------------
+# MESSAGE FORMAT (for reference — time tags are auto-generated in code)
+# -----------------------------------------------------------------------------
+# Each post looks like:
+#
+#   🔔 #Crypto #News #11august2026
+#
+#   📰 Bitcoin hits all-time high
+#
+#   📝 [30-70 word summary here]
+#
+#   🌐 CoinDesk  |  🕒 11 Aug 2026 16:30 UTC
+#   🔗 https://...
+#
+#   #4:30pmUTC #10:00pmIST
+#   #Crypto #CryptoNews #Bitcoin #Blockchain
+#
+# Time tag formats:
+#   Date : #11august2026     (day + month lowercase + year, no spaces)
+#   UTC  : #4:30pmUTC        (12-hour, no leading zero, lowercase am/pm)
+#   IST  : #10:00pmIST       (India Standard Time = UTC+5:30)
+# -----------------------------------------------------------------------------
